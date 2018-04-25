@@ -179,20 +179,33 @@ class RasterizePoints(BatchFilter):
         data_roi = Roi(offset, shape)
 
         logger.debug("Points in %s", points.spec.roi)
+
         for i, point in points.data.items():
             logger.debug("%d, %s", i, point.location)
+
+
         logger.debug("Data roi in voxels: %s", data_roi)
         logger.debug("Data roi in world units: %s", data_roi*voxel_size)
 
         if mask is not None:
 
             mask_array = batch.arrays[mask].crop(enlarged_vol_roi)
-            # get all component labels in the mask
-            labels = list(np.unique(mask_array.data))
+
+            # get those component labels in the mask, that contain points.
+            labels = []
+            for i, point in points.data.items():
+                v = Coordinate(point.location / voxel_size)
+                v -= data_roi.get_begin()
+                labels.append(mask_array.data[v])
+            # Make list unique.
+            labels = list(set(labels))
+
+
 
             # zero label should be ignored
             if 0 in labels:
                 labels.remove(0)
+
 
             # create data for the whole points ROI, "or"ed together over
             # individual object masks
