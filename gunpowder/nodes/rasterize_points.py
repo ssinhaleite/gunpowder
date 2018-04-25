@@ -183,11 +183,15 @@ class RasterizePoints(BatchFilter):
         for i, point in points.data.items():
             logger.debug("%d, %s", i, point.location)
 
-
+            
         logger.debug("Data roi in voxels: %s", data_roi)
         logger.debug("Data roi in world units: %s", data_roi*voxel_size)
 
-        if mask is not None:
+        if len(points.data.items()) == 0:
+            # If there are no points at all, just create an empty matrix.
+            rasterized_points_data = np.zeros(data_roi.get_shape(),
+                                              dtype=self.spec[self.array].dtype)
+        elif mask is not None:
 
             mask_array = batch.arrays[mask].crop(enlarged_vol_roi)
 
