@@ -179,11 +179,8 @@ class RasterizePoints(BatchFilter):
         data_roi = Roi(offset, shape)
 
         logger.debug("Points in %s", points.spec.roi)
-
         for i, point in points.data.items():
             logger.debug("%d, %s", i, point.location)
-
-            
         logger.debug("Data roi in voxels: %s", data_roi)
         logger.debug("Data roi in world units: %s", data_roi*voxel_size)
 
@@ -204,12 +201,9 @@ class RasterizePoints(BatchFilter):
             # Make list unique.
             labels = list(set(labels))
 
-
-
             # zero label should be ignored
             if 0 in labels:
                 labels.remove(0)
-
 
             # create data for the whole points ROI, "or"ed together over
             # individual object masks
